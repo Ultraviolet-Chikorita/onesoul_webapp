@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>OneSoul AI</title>
+        <link rel="icon" type="image/x-icon">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
+        <style>
+            * {
+                font-family: 'IBM Plex Mono', monospace;
+                color: white;
+            }
+
+            html, body {
+                height: 100%;
+                margin: 0;
+            }
+
+            body{
+                background: linear-gradient(black, #520987);
+                position: relative;
+                overflow: hidden;
+            }
+
+            body::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 200%;
+                z-index: -1;
+                pointer-events: none;
+                opacity: 0.1;
+                background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 5 L5 0 L10 5' stroke='white' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+                background-size: 20px 20px;
+                background-repeat: repeat;
+                animation: scrollChevrons 10s linear infinite;
+                -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 95%);
+                mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 95%);
+            }
+            @keyframes scrollChevrons {
+                0% {
+                    background-position-y: 0;
+                }
+                100% {
+                    background-position-y: -200px;
+                }
+            }
+            #loginOverlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.4s ease;
+            }
+            #loginOverlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .overlay-background {
+                width: 100%;
+                height: 100%;
+                display: flex; 
+                justify-content: center; 
+                align-items: center;
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(15px);
+            }
+            #login_box {
+                min-width: fit-content;
+                min-height: fit-content;
+                background-color: white;
+                padding: 50px;
+                border-radius: 30px;
+                text-align: center;
+                color: black;
+            }
+
+        </style>
+    </head>
+    <body>
+        
+        <div style="width:100%;height:100%;">
+            <div style="width: 100%;height:15vh;box-sizing: border-box;padding:20px;display: flex;align-items: center;text-align: center;">
+                <img src="{% static 'images/logo1.png' %}" alt="OneSoul.AI Logo" 
+     style="height: 100%; aspect-ratio: 1/1; border-radius: 15px; object-fit: contain; margin-right: 20px;">
+                <h1>OneSoul.AI</h1>
+                <div style="display: flex; gap: 10px; margin-left: auto; margin-right: 50px;">
+                    <!-- Demo Button -->
+                    <a href="{% url 'demo' %}" style="text-decoration: none;">
+                        <div id="demoButton" 
+                            style="height: fit-content;min-width: 100px;padding: 10px;
+                                border-radius: 15px;color:white;background-color: #C676FF;
+                                font-size: 12px; cursor: pointer;">
+                            + Demo
+                        </div>
+                    </a>
+
+                    <a href="{% url 'waitlist' %}" style="text-decoration: none;">
+                        <div id="waitlistButton" 
+                            style="height: fit-content; min-width: 100px; padding: 10px;
+                                border-radius: 15px; color: white; background-color: #C676FF;
+                                font-size: 12px; cursor: pointer;">
+                            + Waitlist
+                        </div>
+                    </a>
+                </div>
+            
+            </div>
+            <div style="width: 100%;height:85vh;display: flex;justify-content: center;align-items: center;box-sizing: border-box;flex-direction: column;">
+                <img src="{% static 'images/logo1.png' %}" alt="OneSoul.AI Logo" 
+     style="height: 20%; aspect-ratio: 1/1; border-radius: 25px; object-fit: contain;">
+                <h1 style="font-size: 70px;margin-top: 0;margin-bottom: 25px;">OneSoul.AI</h1>
+                <div style="width: 60%;text-justify: center;display: flex;text-align: center;justify-content: center;">
+                    <h1 style="margin:0;margin-bottom: 15px;font-weight: 400;">World's first AI matchmaker</h1>
+                </div>
+                <div style="width: 60%;text-justify: center;display: flex;text-align: center;justify-content: center;">
+                    <h3 style="margin: 0;font-weight: 100;">Unleash the magic of Agent Cupid! Create a dazzling digital twin of yourself and let AI guide you to your perfect soulmates. Dive into the future of matchmaking—where love meets intelligence!</h3>
+                </div>
+            </div>
+        </div>
+
+        <div id="loginOverlay">
+            <div class="overlay-background">
+                <div id="login_box">
+                    <h1 style="margin: 0;color:black">Log In</h1>
+                    <p style="color: rgb(78, 78, 78);font-size: 14px;">Connect your wallet or social media</p>
+                    <div style="background-color: #2C2C2C;color:white;padding: 10px;border-radius: 8px;margin-top: 50px;cursor: pointer;">Connect Wallet</div>
+                    <p style="color: rgb(78, 78, 78);margin:10px;">Or</p>
+                    <div style="background-color: #2C2C2C;color:white;padding: 10px;border-radius: 8px;cursor: pointer;">Connect Social Media</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="position: absolute;right: 20px;bottom: 20px;">
+            <div style="border-radius:0 0 15px 0;width: 50px;height: 50px;background-color: #C676FF;display: flex;justify-content: center;align-items: center;cursor: pointer;">
+                <img src="{% static 'messaging_icon.png' %}" style="width:60%"/>
+            </div>
+        </div>
+          
+
+        <script>
+            const loginButton = document.getElementById("loginButton");
+            const loginOverlay = document.getElementById("loginOverlay");
+            const loginBox = document.getElementById("login_box");
+            loginButton.addEventListener('click', () => {
+                loginOverlay.classList.add("active");
+            });
+            loginOverlay.addEventListener('click', (event) => {
+                if (!loginBox.contains(event.target)) {
+                    loginOverlay.classList.remove("active");
+                }
+            });
+        </script>
+    </body>
+</html>

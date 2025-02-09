@@ -1,0 +1,22 @@
+{% load static %}  <!-- Load static files correctly -->
+
+<header style="
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 60px;
+    display: flex; 
+    align-items: center; 
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+">
+    <a href="{% url 'landing_page' %}" style="display: flex; align-items: center; text-decoration: none;">
+        <img src="{% static 'images/logo1.png' %}" alt="OneSoul AI Logo" style="height: 40px; width: auto; margin-right: 10px;">
+        <h2 style="margin: 0; font-weight: 600; letter-spacing: 1px; color: white;">
+            OneSoul AI
+        </h2>
+    </a>
+</header>

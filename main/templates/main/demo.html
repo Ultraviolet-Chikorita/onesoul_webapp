@@ -1,0 +1,266 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot | OneSoul AI</title>
+    <link rel="icon" type="image/x-icon">
+    
+    <!-- Import Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <style>
+        * {
+            font-family: 'IBM Plex Mono', monospace;
+            color: white;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body{
+            background: linear-gradient(black, #520987);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 200%;
+                z-index: -1;
+                pointer-events: none;
+                opacity: 0.1;
+                background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 5 L5 0 L10 5' stroke='white' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+                background-size: 20px 20px;
+                background-repeat: repeat;
+                animation: scrollChevrons 10s linear infinite;
+                -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 95%);
+                mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 95%);
+            }
+            @keyframes scrollChevrons {
+                0% {
+                    background-position-y: 0;
+                }
+                100% {
+                    background-position-y: -200px;
+                }
+            }
+
+        /* Center Content */
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        /* Chatbot Wrapper */
+        .chatbot-wrapper {
+            width: 60%;
+            max-width: 500px;
+            height: 70vh;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chatbox {
+            flex-grow: 1;
+            overflow-y: auto;
+            text-align: left;
+            padding: 10px;
+            height: 100%;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .chat-input button {
+            background-color: #C676FF;
+            color: white;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'partials/header.html' %}
+    
+    <div class="container">
+        <h1>Agent Melania</h1>
+        <p>Chat with Agent Melania and let her know more about you!</p>
+        <div class="chatbot-wrapper">
+            <div id="chatbox" class="chatbox">
+                <p><strong>Cupid:</strong> You've Connected with Melania Trump, Say Hi and break the ice!</p>
+            </div>
+            <div class="chat-input">
+                <!-- <input type="text" id="userInput" placeholder="Type your message..."> -->
+                <!-- <button onclick="sendMessage()">Send</button> -->
+                <button style="width:100%;cursor:pointer" id="convo_start">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+    let clicked = false;
+    messages = [{"role": "system", "message": `You just recently matched with Melania Trump and are on a date with her with this scenerio:
+    You are at a restaurant with Melania Trump and this is your first time meeting her. Forget that you are married to her or have any interests. You just arrived and are seated at your table. You are both looking at the menu. What do you say to Melania Trump? Remember, you are trying to impress her and get to know her well to see if this date goes well and if there would be a second one! At each turn evaluate the previous messages from both you and her responses and see if she seems interested or not. If you think she is not interested at all then call 'CUT' to signify that it is not a match. After 14 turns if the convo is going strong say 'MATCH'` }];
+
+    document.getElementById("convo_start").addEventListener('click', async () => {
+        if (clicked) {
+            console.log("Conversation already started!");
+            return;
+        }
+
+        clicked = true;
+        console.log("Conversation starting...");
+        document.getElementById("convo_start").style.cursor = "default";
+
+        let chatbox = document.getElementById("chatbox");
+
+        async function conversationRound(round) {
+            if (round > 10) {
+                document.getElementById("convo_start").innerHTML = "Conversation Ended";
+                try{
+                    let typingCupid = document.createElement("p");
+                    typingCupid.innerHTML = `<strong>Cupid:</strong> <em>Evaluating...</em>`;
+                    chatbox.appendChild(typingCupid);
+                    chatbox.scrollTop = chatbox.scrollHeight;
+
+                    message = {"role": "cupid_evaluation", "message": `Evaluating the whole previous conversation and see how much of a match Donald Trump and Melania Trump are. Return a combatibility score between 0 and 100, where 0 is not a match and 100 is a perfect match. If the score is above 80, then it is a match and below 80 is not a match. If it is a match then say 'MATCH' and if it is not a match then say 'CUT'. Also give a brief summary of why Melania Trump would be a good or bad match for Donald Trump based on the conversation. And what their first date plan should be in case of a match. 
+                    ALWAYS You must give the response in the following format:
+                    {
+                        'role': 'cupid_evaluation',
+                        'reply': {
+                        'compatible': 'MATCH' or 'CUT',
+                        'score': Number between 0 and 100,
+                        'summary': Summary of the type of person Melania is and similarites and differences between her and Donald Trump,
+                        'first_date': First date plan}
+                    }`};
+                    messages.push(message);
+
+                    let responseCupid = await fetch("{% url 'chatbot_reply' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ "messages": messages, "match_person_1": "MAGA_Trump", "match_person_2": "melania_trump" })
+                    });
+
+                    let dataCupid = await responseCupid.json();
+                    let cupidReply = dataCupid.reply;
+                    messages.push({ "role": "cupid_evaluation", "message": cupidReply });
+                    typingCupid.remove(); // Remove typing indicator
+                    chatbox.innerHTML += `<p><strong>Cupid:</strong> ${cupidReply}</p>`;
+                    chatbox.scrollTop = chatbox.scrollHeight;
+
+                }
+                catch (error) {
+                    console.error("Error in conversation:", error);
+                }
+                return;
+            }
+
+            document.getElementById("convo_start").innerHTML = `Round ${round}`;
+
+            try {
+                // Show typing indicator for Donald Trump
+                let typingDonald = document.createElement("p");
+                typingDonald.innerHTML = `<strong>Donald Trump:</strong> <em>typing...</em>`;
+                chatbox.appendChild(typingDonald);
+                chatbox.scrollTop = chatbox.scrollHeight;
+
+                let responseDonald = await fetch("{% url 'donald_trump' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ "messages": messages })
+                });
+
+                let dataDonald = await responseDonald.json();
+                let donaldReply = dataDonald.reply;
+                messages.push({ "role": "donald_trump", "message": donaldReply });
+
+                typingDonald.remove(); // Remove typing indicator
+                chatbox.innerHTML += `<p><strong>Donald Trump:</strong> ${donaldReply}</p>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+
+                // Show typing indicator for Melania Trump
+                let typingMelania = document.createElement("p");
+                typingMelania.innerHTML = `<strong>Melania Trump:</strong> <em>typing...</em>`;
+                chatbox.appendChild(typingMelania);
+                chatbox.scrollTop = chatbox.scrollHeight;
+                
+                let responseMelania = await fetch("{% url 'melania_trump' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ "messages": messages })
+                });
+
+                let dataMelania = await responseMelania.json();
+                let melaniaReply = dataMelania.reply;
+                messages.push({ "role": "melania_trump", "message": melaniaReply });
+
+                typingMelania.remove(); // Remove typing indicator
+                chatbox.innerHTML += `<p><strong>Melania Trump:</strong> ${melaniaReply}</p>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+                conversationRound(round + 1); // Continue the conversation with the next round of message
+s
+            } catch (error) {
+                console.error("Error in conversation:", error);
+            }
+        }
+
+        // Start the conversation
+        conversationRound(1);
+    });
+
+    </script>    
+    
+</body>
+</html>

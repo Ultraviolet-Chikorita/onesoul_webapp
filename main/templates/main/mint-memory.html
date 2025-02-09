@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mint Your Memory | OneSoul AI</title>
+    <link rel="icon" type="image/x-icon">
+    
+    <!-- Import Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Import Landing Page Styles -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        * {
+            font-family: 'IBM Plex Mono', monospace;
+            color: white;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(black, #520987);
+            position: relative;
+        }
+
+        /* Background effect */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 5 L5 0 L10 5' stroke='white' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+            background-size: 20px 20px;
+            background-repeat: repeat;
+            animation: scrollChevrons 10s linear infinite;
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 95%);
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 95%);
+        }
+
+        @keyframes scrollChevrons {
+            0% {
+                background-position-y: 0;
+            }
+            100% {
+                background-position-y: -200px;
+            }
+        }
+
+        /* Center Content */
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input, button {
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            width: 60%;
+            max-width: 400px;
+        }
+
+        input {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-align: left;
+            outline: none;
+            padding: 12px;
+            min-height: 50px;
+            word-wrap: break-word;
+        }
+
+        /* Custom Upload Button */
+        .custom-file-upload {
+            display: inline-block;
+            background-color: #C676FF;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #a04ed6;
+        }
+
+        /* Image Preview */
+        #imagePreview {
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+
+        button {
+            background-color: #C676FF;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #a04ed6;
+        }
+
+        a {
+            color: #C676FF;
+            text-decoration: none;
+            font-size: 18px;
+            display: inline-block;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            color: white;
+        }
+
+        #statusMessage {
+            font-size: 14px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Include Landing Page Header -->
+    {% include 'partials/header.html' %}
+
+    <div class="container">
+        <h1>Mint Your Memory</h1>
+        <p>Immortalize your love with AI-driven memories on your DNS domain.</p>
+
+        <form id="mintForm" enctype="multipart/form-data">
+            <!-- Custom File Upload -->
+            <label for="memory" class="custom-file-upload">
+                Upload Image
+            </label>
+            <input type="file" id="memory" accept="image/*" required hidden>
+            <span id="fileName" style="display: block; margin-top: 10px; font-size: 14px;"></span>
+
+            <!-- Image Preview -->
+            <img id="imagePreview">
+
+            <!-- DNS Domain Input -->
+            <input type="text" id="dnsDomain" placeholder="Enter your DNS domain" required>
+
+            <!-- Submit Button -->
+            <button type="submit">Mint Memory</button>
+        </form>
+        
+        <p id="statusMessage"></p>
+
+        <a href="{% url 'landing_page' %}">← Back to Home</a>
+    </div>
+
+    <script>
+        document.getElementById("memory").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            const fileNameDisplay = document.getElementById("fileName");
+            const imagePreview = document.getElementById("imagePreview");
+
+            if (file) {
+                // Show selected file name
+                fileNameDisplay.textContent = `Selected: ${file.name}`;
+                
+                // Show image preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = "block"; 
+                };
+                reader.readAsDataURL(file); 
+            } else {
+                fileNameDisplay.textContent = "";
+                imagePreview.style.display = "none"; 
+            }
+        });
+
+        document.getElementById("mintForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const memory = document.getElementById("memory").files[0];  
+            const dnsDomain = document.getElementById("dnsDomain").value;
+            const statusMessage = document.getElementById("statusMessage");
+
+            if (!memory) {
+                statusMessage.textContent = "Please upload an image.";
+                return;
+            }
+
+            statusMessage.textContent = "Minting in progress...";
+
+            // Simulate a blockchain transaction with a timeout
+            setTimeout(() => {
+                statusMessage.textContent = `Memory minted successfully on ${dnsDomain}!`;
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
