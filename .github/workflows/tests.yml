@@ -26,6 +26,9 @@ jobs:
         env:
           DJANGO_SECRET_KEY: ci-only-secret
           DJANGO_DEBUG: "0"
+          # Legacy views currently construct the OpenAI client at import time.
+          # No model-backed endpoint is called by this deterministic suite.
+          OPENAI_API_KEY: ci-placeholder-not-a-live-key
         run: |
           python manage.py check
           python manage.py test
