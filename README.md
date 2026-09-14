@@ -18,11 +18,11 @@ flowchart LR
     DB --> F[Optional Flare/FDC attestation]
 ```
 
-The project is interesting less because of the matchmaking claim than because it combines an **agent-to-agent interaction**, a separate evaluator, persistence/provenance, and an external verification path in one application.
+The project combines an **agent-to-agent interaction**, a separate evaluator, persistence/provenance, and an external verification path in one application.
 
-## Reviewer guide
+## Key components
 
-| File | What to inspect |
+| File | Responsibility |
 | --- | --- |
 | [`main/views.py`](main/views.py) | persona/evaluator orchestration and API flow |
 | [`main/models.py`](main/models.py) | persisted profile/conversation state and result hashing |
@@ -107,7 +107,7 @@ The experimental verification path:
 5. retrieves the proof/response from the configured data-availability service;
 6. submits the proof to the contract.
 
-This path can create blockchain transactions and depends on external network/contract assumptions. Review transaction value, network, contract addresses and keys before executing it. It should not be enabled by default in an ordinary local demo.
+This path can create blockchain transactions and depends on external network/contract assumptions. Check transaction value, network, contract addresses and keys before executing it. It should not be enabled by default in an ordinary local demo.
 
 ## Security, privacy and product limitations
 
@@ -124,6 +124,6 @@ Current limitations include:
 - the legacy `views.py` still instantiates the OpenAI SDK client at module import, so deterministic CI supplies a non-live placeholder credential even though it never calls a model-backed endpoint; lazy provider construction is a remaining cleanup item;
 - product screens and endpoints are at different levels of completeness.
 
-## Best next engineering work
+## Future work
 
-I would decouple conversation generation, evaluation and verification into explicit service interfaces; move provider-client construction behind those interfaces; schema-validate the evaluator response before it reaches presentation logic; make chain submission opt-in and testnet-only by default; add mocked service-level tests for the full conversation→evaluation→hash path; and replace broad profile collection with the minimum data actually required by the experiment.
+Useful next steps are to decouple conversation generation, evaluation and verification into explicit service interfaces; move provider-client construction behind those interfaces; schema-validate the evaluator response before it reaches presentation logic; make chain submission opt-in and testnet-only by default; add mocked service-level tests for the full conversation→evaluation→hash path; and replace broad profile collection with the minimum data actually required by the experiment.
